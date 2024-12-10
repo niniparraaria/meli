@@ -17,6 +17,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +39,7 @@ import com.ninestudios.meli.ui.views.ErrorScreen
 import com.ninestudios.meli.ui.views.LoadingScreen
 import org.koin.compose.viewmodel.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailDetailScreen(id:String, onBack: () -> Unit) {
     Surface(
@@ -50,46 +56,76 @@ fun CocktailDetailScreen(id:String, onBack: () -> Unit) {
             ApiStatus.SUCCESS -> {
                 val drinks = response.value.data?.drinks?.firstOrNull()
                 if (drinks != null){
-                    ContentScreen(drinks) {
-                        onBack.invoke()
+                    Column {
+                        TopAppBar(
+                            title = { Text(text = drinks.strDrink?:"", fontSize = 20.sp ) },
+                            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary, titleContentColor = MaterialTheme.colorScheme.background),
+                            navigationIcon = {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    tint = MaterialTheme.colorScheme.background,
+                                    modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .clickable {
+                                            onBack.invoke()
+                                        },
+                                    contentDescription = stringResource(id = R.string.back_description)
+                                )
+                            }
+                        )
+                        CocktailDetail(imageUrl = drinks.strDrinkThumb?:"" , ingredients = drinks.getIngredients(), isAlcoholic = drinks.isAlcholic(), instructions = drinks.strInstructions?:"" , name = drinks.strDrink?:"")
                     }
                 }else{
-                    ErrorScreen(stringResource(R.string.try_again_message))
+                    Column {
+                        TopAppBar(
+                            title = { Text(text = stringResource(R.string.app_name), fontSize = 20.sp ) },
+                            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary, titleContentColor = MaterialTheme.colorScheme.background),
+                            navigationIcon = {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.ArrowBack,
+                                    tint = MaterialTheme.colorScheme.background,
+                                    modifier = Modifier
+                                        .width(30.dp)
+                                        .height(30.dp)
+                                        .clickable {
+                                            onBack.invoke()
+                                        },
+                                    contentDescription = stringResource(id = R.string.back_description)
+                                )
+                            }
+                        )
+                        ErrorScreen(stringResource(R.string.try_again_message))
+                    }
                 }
             }
             ApiStatus.ERROR -> {
-                ErrorScreen(response.value.messageError)
+                Column {
+                    TopAppBar(
+                        title = { Text(text = stringResource(R.string.app_name), fontSize = 20.sp ) },
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary, titleContentColor = MaterialTheme.colorScheme.background),
+                        navigationIcon = {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowBack,
+                                tint = MaterialTheme.colorScheme.background,
+                                modifier = Modifier
+                                    .width(30.dp)
+                                    .height(30.dp)
+                                    .clickable {
+                                        onBack.invoke()
+                                    },
+                                contentDescription = stringResource(id = R.string.back_description)
+                            )
+                        }
+                    )
+                    ErrorScreen(response.value.messageError)
+                }
             }
             ApiStatus.LOADING -> {
                 LoadingScreen()
             }
         }
 
-
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ContentScreen(drink:CocktailsResponse.Drink, onBack: () -> Unit){
-    Column {
-        TopAppBar(
-            title = { Text(text = drink.strDrink?:"", fontSize = 20.sp ) },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary, titleContentColor = MaterialTheme.colorScheme.background),
-            navigationIcon = {
-                Icon(
-                    Icons.AutoMirrored.Filled.ArrowBack,
-                    tint = MaterialTheme.colorScheme.background,
-                    modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .clickable {
-                            onBack.invoke()
-                        },
-                    contentDescription = stringResource(id = R.string.back_description)
-                )
-            }
-        )
-        CocktailDetail(imageUrl = drink.strDrinkThumb?:"" , ingredients = drink.getIngredients(), isAlcoholic = drink.isAlcholic(), instructions = drink.strInstructions?:"" , name = drink.strDrink?:"")
     }
 }
 

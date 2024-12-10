@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Cocktails</string>
+    <string name="error_no_internet">We are sorry, please check your network connexion</string>
+    <string name="cocktail_item_ingredients_title">Ingredients</string>
+    <string name="cocktail_item_instructions_title">Instructions</string>
+    <string name="cocktail_item_ingredients">• %1$s</string>
+    <string name="error_description">Error image</string>
+    <string name="back_description">Back</string>
+    <string name="try_again_label">Try Again</string>
+    <string name="placeholder_search">Search Cocktails</string>
+    <string name="empty_description">No cocktails found, please try again</string>
+    <string name="try_again_message">We are sorry, please try again</string>
+</resources>
